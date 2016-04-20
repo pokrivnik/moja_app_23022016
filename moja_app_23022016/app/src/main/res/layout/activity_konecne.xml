@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/pozadi"
+    tools:context="com.example.hradi.moja_app_23022016.konecne">
+<!--http://www.itnetwork.cz/java/android/android-programovani-graficky-navrh-aplikaci-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView"
+        android:layout_toEndOf="@+id/angry_btn"
+        android:rowCount="25"
+        android:columnCount="10"
+        android:id="@+id/gridLayout">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="hmm"
+            android:id="@+id/textView"
+            android:textColor="#020000"
+            android:layout_column="1"
+            android:layout_row="0"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:inputType="textMultiLine"
+            android:background="#ffffff" />
+
+        <Button
+            android:id="@+id/angry_btn"
+            android:text="UDP video"
+            android:textColor="#FFFFFF"
+            android:textSize="10sp"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:background="@drawable/buttonshape"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            android:layout_column="9"
+            android:layout_row="1"
+            android:layout_marginLeft="977dp"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentEnd="true" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:layout_column="1"
+            android:background="#fcf8f8"
+            android:minHeight="200dp"
+            android:minWidth="320dp"
+            android:maxHeight="1024dp"
+            android:maxWidth="768dp"
+            android:longClickable="true"
+            android:layout_row="2"
+            android:layout_marginLeft="72dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect"
+            android:id="@+id/connect"
+            android:layout_column="9"
+            android:layout_row="2"
+            android:layout_marginLeft="977dp"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="53dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doprava"
+            android:id="@+id/doprava"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dolava"
+            android:id="@+id/dolava"
+            android:layout_alignTop="@+id/doprava"
+            android:layout_toEndOf="@+id/imageView" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dopredu"
+            android:id="@+id/dopredu"
+            android:layout_below="@+id/imageView"
+            android:layout_alignEnd="@+id/textView"
+            android:longClickable="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dozadu"
+            android:id="@+id/dozadu"
+            android:layout_alignBottom="@+id/text_vpravo"
+            android:layout_alignStart="@+id/dopredu" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="dopredu"
+            android:id="@+id/text_dopredu"
+            android:textColor="#ffffff"
+            android:layout_alignBaseline="@+id/dozadu"
+            android:layout_alignBottom="@+id/dozadu"
+            android:layout_toEndOf="@+id/dozadu" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="vpravo"
+            android:id="@+id/text_vpravo"
+            android:layout_above="@+id/doprava"
+            android:layout_toEndOf="@+id/dolava"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Spusti video"
+            android:id="@+id/spusti_video"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_toEndOf="@+id/text_vpravo" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

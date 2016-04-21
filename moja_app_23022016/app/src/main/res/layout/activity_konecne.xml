@@ -49,7 +49,7 @@
             android:layout_column="9"
             android:layout_row="1"
             android:layout_marginLeft="977dp"
-            android:layout_below="@+id/textView"
+            android:layout_above="@+id/connect"
             android:layout_alignParentEnd="true" />
 
         <ImageView
@@ -141,6 +141,20 @@
             android:id="@+id/spusti_video"
             android:layout_alignBottom="@+id/imageView"
             android:layout_toEndOf="@+id/text_vpravo" />
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auto/Tablet"
+            android:id="@+id/switch1"
+            android:layout_above="@+id/dolava"
+            android:textColor="#ffffff"
+            android:textOff="vysielacka"
+            android:textOn="tablet"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            style="@style/AppTheme" />
 
     </RelativeLayout>
 

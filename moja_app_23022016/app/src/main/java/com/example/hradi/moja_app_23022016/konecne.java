@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -57,7 +59,7 @@ public class konecne extends AppCompatActivity {
     private String text = "";
     private String tcp1;
     private String tcp2;
-    private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect;
+    private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect, pom_prepinac, pom_video;
     private final Object lockObject = new Object();
 
 
@@ -107,6 +109,7 @@ public class konecne extends AppCompatActivity {
         Button tlacitko_dolava = (Button)findViewById(R.id.dolava);
         Button tlacitko_doprava = (Button)findViewById(R.id.doprava);
         Button spusti_video = (Button)findViewById(R.id.spusti_video);
+        Switch prepinac = (Switch)findViewById(R.id.switch1);
 
 
 
@@ -125,7 +128,7 @@ public class konecne extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(LOG_TAG, "btnRecv clicked");
                 // funkcia pre prijatie
-                text = prijem();
+                //text = prijem();
             }
         });
         tlacitko_connect.setOnClickListener(new View.OnClickListener() {
@@ -134,11 +137,10 @@ public class konecne extends AppCompatActivity {
             //pri stlaceni tlacitka disconnect sa do raspberry odosle prikaz stop, ktory zastavy vsetku komunikaciu aj veskeru cinnost
             @Override
             public void onClick(View v) {
-                if (pom_connect){
-                    pom_connect = false;
+                if (pom_connect) {
+                    pom_connect = false;//ukonci hlavny komunikacny thread
                     tlacitko_connect.setText("connect");
-                }
-                else{
+                } else {//spusti hlavny komunikacny thread
                     pom_connect = true;
                     tlacitko_connect.setText("disconnect");
                     TcpClient();
@@ -147,42 +149,80 @@ public class konecne extends AppCompatActivity {
 
             }
         });
-        /*tlacitko_dopredu.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                pom_dopredu = true;
-            }
-        });*/
-        tlacitko_dozadu.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v) {
-                pom_dozadu = true;
-            }
-
-        });
-        tlacitko_doprava.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v) {
-                    pom_doprava = true;
+//----------------------------------------------------------------------tlacitko spusti video---------------------------------------------------------------------------------
+        spusti_video.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                pom_connect = true;
             }
 
 
         });
-        tlacitko_dolava.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    pom_dolava = true;
-                }
-        });
-
+//-------------------------------------------------------------------tlacitka ovladanie auta-------------------------------------------------------------
         tlacitko_dopredu.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     pom_dopredu = true;
-                }
-                else if (event.getAction()==MotionEvent.ACTION_UP){
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     pom_dopredu = false;
                 }
                 return false;
             }
         });
+        tlacitko_dozadu.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    pom_dozadu = true;
+                }
+                else if (event.getAction()==MotionEvent.ACTION_UP){
+                    pom_dozadu = false;
+                }
+                return false;
+            }
+        });
+        tlacitko_doprava.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN){
+                    pom_doprava = true;
+                }
+                else if (event.getAction()==MotionEvent.ACTION_UP){
+                    pom_doprava = false;
+                }
+                return false;
+            }
+        });
+        tlacitko_dolava.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    pom_dolava = true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    pom_dolava = false;
+                }
+                return false;
+            }
+        });
+//---------------------------------------------------switch vysielacka/tablet---------------------------------------------------------------------------------
+        prepinac.setChecked(false);
+        prepinac.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    //funkcia, prepinac je on
+                    pom_prepinac = true;
+                    Tcp_ovladanie();
+                }
+                else{
+                    //prepinac je off
+                    pom_prepinac = false;
+                }
+
+            }
+        });
+//-------------------------------------------------------------------------------------------------------------------------------------
         //tlacitko_connect.onHoverChanged();//zmena stavu???
         //tlacitko_connect.removeOnAttachStateChangeListener();
         //tlacitko_connect.hasOnClickListeners()//ak je stlacene, vrati 1
@@ -332,8 +372,8 @@ public class konecne extends AppCompatActivity {
         //a = 0;
 
     }
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------
-    public void TcpClient(){
+    //--------------------------------------------------------------------TCP ovladanie auta port 1236------------------------------------------------------------------------------------
+    public void Tcp_ovladanie(){
         try {
 
         }finally {
@@ -346,33 +386,63 @@ public class konecne extends AppCompatActivity {
                             + Thread.currentThread().getId());
                     // funkcia z ineho vlakna
                     try {
-                        Socket s = new Socket("192.168.0.70", 1235);
+                        Socket s = new Socket("192.168.0.70", 1236);
                         BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
                         //send output msg
+                        if (pom_prepinac){//ak bude zvolene ovladanie z tabletu
                         while (true) {
+                            if (pom_dopredu){
+                                out.write("dopredu");
+                                out.flush();
+                            }
+                            else{
+                                out.write("stop");
+                                out.flush();
+                            }
+                            if (pom_dozadu){
+                                out.write("dozadu");
+                                out.flush();
+                            }
+                            else{
+                                out.write("stop");
+                                out.flush();
+                            }
+                            if (pom_doprava){
+                                out.write("doprava");
+                                out.flush();
+                            }
+                            else{
+                                out.write("stred");
+                                out.flush();
+                            }
+                            if (pom_dolava){
+                                out.write("dolava");
+                                out.flush();
+                            }
+                            else{
+                                out.write("stred");
+                                out.flush();
+                            }
+                            if (pom_prepinac == false){
+                                break;
+                            }
 
-
-                           if (pom_connect){
-
-                           }
-                            else if (pom_dopredu){
-
-                           }
-                            String outMsg = "TCP connecting to ";// + System.getProperty("line.separator");
-
-                            out.write(outMsg);
+                        }}
+                        else{
+                            s.close();
+                            out.write("stred");
                             out.flush();
-                            Log.i("TcpClient", "sent: " + outMsg);
-                            //accept server response
-                            String inMsg = in.readLine();// + System.getProperty("line.separator");
-                            //String inMsg = in.
-                            Log.i("TcpClient", "received: " + inMsg);
-                            //zobraz_text_v_textviev.setText(inMsg);
-                            tcp1 = inMsg;
+                            out.write("stop");
+                            out.flush();
                         }
+                        s.close();
+                        out.write("stred");
+                        out.flush();
+                        out.write("stop");
+                        out.flush();
                                 //close connection
-                       // s.close();
+
                     } catch (UnknownHostException e) {
                      e.printStackTrace();
                     } catch (IOException e) {
@@ -386,8 +456,8 @@ public class konecne extends AppCompatActivity {
             thrd.start();
 
     }
-    //--------------------------------------------------------funkcia start prenosu---------------------------------------------------------------------------------------
-    public void TcpClient1(){
+    //--------------------------------------------------------funkcia start prenosu port 1235---------------------------------------------------------------------------------------
+    public void TcpClient(){
         try {
 
         }finally {
@@ -408,31 +478,48 @@ public class konecne extends AppCompatActivity {
                     //send output msg
                     if (pom_connect){ //ak bolo stlacene tlacitko connect, vlakno je v nekonecnej smycke. ak sa da disconnect, vlakno sa ukonci.
                         out.write("connect");//odosle inicializacnu spravu do raspberry...
+                        out.flush();
                         String outMsg, inMsg;
                         while (true) {
                             inMsg = in.readLine();
                             Log.i("prichodzia sprava", inMsg);
                             if (inMsg=="ok"){
                                 synchronized (lockObject){
-                                    zobraz_text_v_textviev.setText(inMsg);
+                                    zobraz_text_v_textviev.setText(inMsg + "\n");//komunikacia nadviazana
                                 }
+                            }
+                            if(pom_connect){//povolenie odosielania obrazu, prikaz na inicializaciu UDP prenosu. stlacenie tlacitka aktivuje UDP na strane talbetu
+                                //a odoslanie prikazu aktivuje UDP prenos na strane raspberry
 
                             }
+                            if(pom_prepinac){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
+                                out.write("tablet");//povolenie ovladania tabletom, inicializacia tcp komunikacia pre prenos
+                                out.flush();
+                            }
+                            else{
+                                out.write("vysielacka");//zakazanie ovladania tabletom, ukoncenie komunikacie pre prenos
+                                out.flush();
+                            }
+                            /*if(){//odoslanie prikazu pre inicializaciu odosielania dat:teplota, napetie,
+
+                            }*/
 
 
-                            out.write(outMsg);
-                            out.flush();
-                            Log.i("TcpClient", "sent: " + outMsg);
-                            //accept server response
-                            String inMsg = in.readLine();// + System.getProperty("line.separator");
-                            //String inMsg = in.
-                            Log.i("TcpClient", "received: " + inMsg);
-                            //zobraz_text_v_textviev.setText(inMsg);
-                            tcp1 = inMsg;
+                           // String inMsg = in.readLine();// + System.getProperty("line.separator");
+                            if (pom_connect == false){
+                                break;
+                            }
+
                         }
                     }
-                    //close connection
-                    // s.close();
+                    else {
+                        out.write("disconnect");
+                        out.flush();
+                        s.close();
+                    }
+                    out.write("disconnect");
+                    out.flush();
+                    s.close();
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -450,96 +537,7 @@ public class konecne extends AppCompatActivity {
     //------------------------------------------------------------------------funkcia komunikacia TCP-----------------------------------------------------------------------------
     //tuto funkciu by som rad inicializoval po stlaceni tlacitka. TCP komunikacia by nastala ako prva. spustala by video, obrazky, detekciu prekazky,
     //opticky, ultrazvukovy senzor, akoo aj povolenie ovladania z vysielacky alebo tabletu
-    /*class ClientThread implements Runnable {
 
-        public static final String SERVER_IP = "192.168.0.11";
-        public static final int SERVER_PORT = 1235;
-        private String mServerMessage;
-        private OnMessageReceived mMessageListener = null;
-        private boolean mRun = false;
-        private PrintWriter mBufferOut;
-        private BufferedReader mBufferIn;
-
-        @Override
-        public TcpClient (OnMessageReceived listener){
-            mMessageListener = listener;
-        }
-        @Override
-        public void stopClient() {
-            Log.i("Debug", "stopClient");
-
-            // send mesage that we are closing the connection
-            //sendMessage(Constants.CLOSED_CONNECTION + "Kazy");
-
-            mRun = false;
-
-            if (mBufferOut != null) {
-                mBufferOut.flush();
-                mBufferOut.close();
-            }
-
-            mMessageListener = null;
-            mBufferIn = null;
-            mBufferOut = null;
-            mServerMessage = null;
-        }
-
-        @Override
-        public void sendMessage(String message) {
-            if (mBufferOut != null && !mBufferOut.checkError()) {
-                mBufferOut.println(message);
-                mBufferOut.flush();
-            }
-        }
-
-        public void run(){
-            mRun = true;
-            try {
-
-                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-                Log.e("TCP Client", "C: Connecting...");
-                Socket socket = new Socket(serverAddr, SERVER_PORT);
-                try {
-                    //here you must put your computer's IP address.
-                    InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-
-                    Log.e("TCP Client", "C: Connecting...");
-
-                    //create a socket to make the connection with the server
-                    Socket socket = new Socket(serverAddr, SERVER_PORT);
-
-                    try {
-                        Log.i("Debug", "inside try catch");
-                        mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                        mBufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        while (mRun) {
-                            mServerMessage = mBufferIn.readLine();
-                            if (mServerMessage != null && mMessageListener != null) {
-                                //call the method messageReceived from MyActivity class
-                                mMessageListener.messageReceived(mServerMessage);
-                            }
-
-                        }
-                        Log.e("RESPONSE FROM SERVER", "S: Received Message: '" + mServerMessage + "'");
-
-                    } catch (Exception e) {
-
-                        Log.e("TCP", "S: Error", e);
-
-                    } finally {
-                        socket.close();
-                    }
-
-                } catch (Exception e) {
-
-                    Log.e("TCP", "C: Error", e);
-
-                }
-
-
-            }
-
-    }}*/
     //------------------------------------------------------------------------koniec-------------------------------------------------------------------------------
 }//--------------------------------------------------------------------class-------------------------------------------------
 

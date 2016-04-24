@@ -61,6 +61,8 @@ public class konecne extends AppCompatActivity {
     private String tcp2;
     private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect, pom_prepinac, pom_video;
     private final Object lockObject = new Object();
+    private String text_old, text_new;
+    private final Object lockObject1 = new Object();
 
 
     //--------------------------------------------------------------------------------------------------------------------------------------
@@ -96,7 +98,7 @@ public class konecne extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_konecne);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrani otoceniu obrazovky
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrani otoceniu obrazovky
         //pociatocna inicializacia prvkov ako textview
         zobraz_text_v_textviev = (TextView)findViewById(R.id.textView);
         //zobraz_text_v_textviev.setText("0");
@@ -137,13 +139,17 @@ public class konecne extends AppCompatActivity {
             //pri stlaceni tlacitka disconnect sa do raspberry odosle prikaz stop, ktory zastavy vsetku komunikaciu aj veskeru cinnost
             @Override
             public void onClick(View v) {
-                if (pom_connect) {
+                if (pom_connect == true) {
                     pom_connect = false;//ukonci hlavny komunikacny thread
                     tlacitko_connect.setText("connect");
-                } else {//spusti hlavny komunikacny thread
+                    Log.i(LOG_TAG, "pom_connect=false");
+                }
+                else {//spusti hlavny komunikacny thread
                     pom_connect = true;
                     tlacitko_connect.setText("disconnect");
+                    Log.i(LOG_TAG, "pom_connect=true");
                     TcpClient();
+
                 }
 
 
@@ -257,6 +263,7 @@ public class konecne extends AppCompatActivity {
     private Runnable Timer_Tick = new Runnable() {
         public void run() {
             text();
+            zapis_text();
             if (a == 1) {
                 a=0;
                 obrazok();
@@ -269,7 +276,17 @@ public class konecne extends AppCompatActivity {
 
 
     //------------------------------------------------------------------------------------------------------------------------------------------
+    public void zapis_text(){
+        if (text_old!=text_new){
+            Log.d(LOG_TAG, "text_old = text_new");
+            synchronized (lockObject1) {
+                text_old = text_new;
+            }
+            zobraz_text_v_textviev.setText(text_old + System.getProperty("line.separator"));//"\n");//System.getProperty("line.separator"
+                    Log.d(LOG_TAG, "zapisujem");
+        }
 
+    }
 
 
 
@@ -435,6 +452,8 @@ public class konecne extends AppCompatActivity {
                             out.flush();
                             out.write("stop");
                             out.flush();
+                            out.write("disconnect");
+                            out.flush();
                         }
                         s.close();
                         out.write("stred");
@@ -456,6 +475,8 @@ public class konecne extends AppCompatActivity {
             thrd.start();
 
     }
+
+
     //--------------------------------------------------------funkcia start prenosu port 1235---------------------------------------------------------------------------------------
     public void TcpClient(){
         try {
@@ -463,72 +484,79 @@ public class konecne extends AppCompatActivity {
         }finally {
 
         }
-        Thread thrd = new Thread(new Runnable() {
+        final Thread thrd = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.e(LOG_TAG, "start recv thread, thread id: "
                         + Thread.currentThread().getId());
+                String outMsg, inMsg;
                 // tuna bude bezat hlavna komunikacia s raspberry, port 1235. v prvom rade bude poslany prikaz start. ten inicializuje raspberry. spusti sa komunikacia
                 //a raspberry bude cakat co dalej. napriklad spustenie videa, zastavenie videa, zapnutie vysielacky, ovladanie z tabletu
                 //spustenie videa bude znamenat spustenie dalsieho vlakna, ktore bude prijimat obrazky cez UDP
                 try {
-                    Socket s = new Socket("192.168.0.70", 1235);
+                    Socket s = new Socket("192.168.0.70", 1237);
                     BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     BufferedWriter out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
                     //send output msg
+
                     if (pom_connect){ //ak bolo stlacene tlacitko connect, vlakno je v nekonecnej smycke. ak sa da disconnect, vlakno sa ukonci.
                         out.write("connect");//odosle inicializacnu spravu do raspberry...
                         out.flush();
-                        String outMsg, inMsg;
+                        Log.d(LOG_TAG, "odoslana sprava connect");
+                        //inMsg = in.readLine();
                         while (true) {
+                            Thread.sleep(10);
+                            Log.d(LOG_TAG, "while");
+                            out.write("stav");//odosle inicializacnu spravu do raspberry...
                             inMsg = in.readLine();
-                            Log.i("prichodzia sprava", inMsg);
-                            if (inMsg=="ok"){
-                                synchronized (lockObject){
-                                    zobraz_text_v_textviev.setText(inMsg + "\n");//komunikacia nadviazana
-                                }
-                            }
-                            if(pom_connect){//povolenie odosielania obrazu, prikaz na inicializaciu UDP prenosu. stlacenie tlacitka aktivuje UDP na strane talbetu
-                                //a odoslanie prikazu aktivuje UDP prenos na strane raspberry
+                            out.flush();
+                            Log.d(LOG_TAG, "sprava stav odoslana");
+                            //vsetky spravy by sa mohli zobrazovat pre istotu aj vo vedlajsom textview
 
-                            }
-                            if(pom_prepinac){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
+                            /*if(pom_connect){//povolenie odosielania obrazu, prikaz na inicializaciu UDP prenosu. stlacenie tlacitka aktivuje UDP na strane talbetu
+                                //a odoslanie prikazu aktivuje UDP prenos na strane raspberry
+                            }*/
+                            if(pom_doprava){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
+                                Log.d(LOG_TAG, "doprava");
                                 out.write("tablet");//povolenie ovladania tabletom, inicializacia tcp komunikacia pre prenos
                                 out.flush();
+                                Log.i("prichodzia sprava", inMsg);
+
                             }
-                            else{
-                                out.write("vysielacka");//zakazanie ovladania tabletom, ukoncenie komunikacie pre prenos
-                                out.flush();
-                            }
-                            /*if(){//odoslanie prikazu pre inicializaciu odosielania dat:teplota, napetie,
 
-                            }*/
-
-
-                           // String inMsg = in.readLine();// + System.getProperty("line.separator");
                             if (pom_connect == false){
+                                Thread.sleep(10);
+                                Log.d(LOG_TAG, "disconnect");
+                                out.write("disconnect");
+                                out.flush();
+                                Thread.sleep(10);
                                 break;
                             }
-
                         }
+                        Log.d(LOG_TAG, "preskakujem while");
                     }
                     else {
                         out.write("disconnect");
+                        Log.d(LOG_TAG, "posledna sprava");
+                        inMsg = in.readLine();
                         out.flush();
                         s.close();
+                        Log.d(LOG_TAG, "socket close");
                     }
-                    out.write("disconnect");
-                    out.flush();
                     s.close();
+                    Log.d(LOG_TAG, "socket ukonceny");
+
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
 
         });
-        Log.d(LOG_TAG, "thread close");
+        Log.d(LOG_TAG, "thread tcp client close");
 
         thrd.start();
 

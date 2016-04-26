@@ -59,7 +59,7 @@ public class konecne extends AppCompatActivity {
     private String text = "";
     private String tcp1;
     private String tcp2;
-    private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect, pom_prepinac, pom_video;
+    private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect, pom_prepinac, pom_video = false, pom_video_start = false;
     private final Object lockObject = new Object();
     private String text_old, text_new;
     private final Object lockObject1 = new Object();
@@ -110,7 +110,7 @@ public class konecne extends AppCompatActivity {
         Button tlacitko_dozadu = (Button)findViewById(R.id.dozadu);
         Button tlacitko_dolava = (Button)findViewById(R.id.dolava);
         Button tlacitko_doprava = (Button)findViewById(R.id.doprava);
-        Button spusti_video = (Button)findViewById(R.id.spusti_video);
+        final Button spusti_video = (Button)findViewById(R.id.spusti_video);
         Switch prepinac = (Switch)findViewById(R.id.switch1);
 
 
@@ -143,6 +143,8 @@ public class konecne extends AppCompatActivity {
                     pom_connect = false;//ukonci hlavny komunikacny thread
                     tlacitko_connect.setText("connect");
                     Log.i(LOG_TAG, "pom_connect=false");
+                    spusti_video.setText("Spusti video");
+                    pom_video = false;
                 }
                 else {//spusti hlavny komunikacny thread
                     pom_connect = true;
@@ -156,10 +158,17 @@ public class konecne extends AppCompatActivity {
             }
         });
 //----------------------------------------------------------------------tlacitko spusti video---------------------------------------------------------------------------------
-        spusti_video.setOnClickListener(new View.OnClickListener(){
+        spusti_video.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                pom_connect = true;
+            public void onClick(View v) {
+                if (pom_video == false){
+                    pom_video = true;
+                    spusti_video.setText("Video ON");
+                }
+                /*else{
+                    pom_video = true;
+                    spusti_video.setText("Spusti video");
+                }*/
             }
 
 
@@ -211,6 +220,7 @@ public class konecne extends AppCompatActivity {
                 return false;
             }
         });
+
 //---------------------------------------------------switch vysielacka/tablet---------------------------------------------------------------------------------
         prepinac.setChecked(false);
         prepinac.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -262,7 +272,7 @@ public class konecne extends AppCompatActivity {
 
     private Runnable Timer_Tick = new Runnable() {
         public void run() {
-            text();
+            //text();
             zapis_text();
             if (a == 1) {
                 a=0;
@@ -282,7 +292,7 @@ public class konecne extends AppCompatActivity {
             synchronized (lockObject1) {
                 text_old = text_new;
             }
-            zobraz_text_v_textviev.setText(text_old + System.getProperty("line.separator"));//"\n");//System.getProperty("line.separator"
+            zobraz_text_v_textviev.setText("\n" + text_old);//"" System.getProperty("line.separator"));//"\n");//System.getProperty("line.separator"
                     Log.d(LOG_TAG, "zapisujem");
         }
 
@@ -326,13 +336,22 @@ public class konecne extends AppCompatActivity {
                         //bmp2 = bmp;
                         pom = dp.getLength();
                         a = 1;
-
+                        //Thread.sleep(1);
                         // --------------------------------------------------------------------------------------------------------
+                        if (pom_video_start = false){
+                            Thread.sleep(100);
+                            break;
+                        }
                     }
+                    ds.close();
                 } catch (SocketException se) {
                     Log.e(LOG_TAG, "SocketException: " + se.toString());
                 } catch (IOException ie) {
                     Log.e(LOG_TAG, "IOException" + ie.toString());
+                } /*catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/ catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -359,8 +378,8 @@ public class konecne extends AppCompatActivity {
     }
 //--------------------------------------------------------------------------------------------------------------------------------------
     public void obrazok() {
-        tcp2=tcp1;
-        zobraz_text_v_textviev.setText(tcp2);
+        //tcp2=tcp1;
+        //zobraz_text_v_textviev.setText(tcp2);
         byte[] obraz=obrazok;
         //byte rgb[] = Base64.decode(obraz, 0);
         //Bitmap bmp3 = bmp2;
@@ -503,33 +522,49 @@ public class konecne extends AppCompatActivity {
                         out.write("connect");//odosle inicializacnu spravu do raspberry...
                         out.flush();
                         Log.d(LOG_TAG, "odoslana sprava connect");
+                        synchronized (lockObject1) {
+                            text_new="conn start";
+                        }
                         //inMsg = in.readLine();
                         while (true) {
-                            Thread.sleep(10);
+                            Thread.sleep(1000);
                             Log.d(LOG_TAG, "while");
                             out.write("stav");//odosle inicializacnu spravu do raspberry...
                             inMsg = in.readLine();
                             out.flush();
                             Log.d(LOG_TAG, "sprava stav odoslana");
+
                             //vsetky spravy by sa mohli zobrazovat pre istotu aj vo vedlajsom textview
 
                             /*if(pom_connect){//povolenie odosielania obrazu, prikaz na inicializaciu UDP prenosu. stlacenie tlacitka aktivuje UDP na strane talbetu
                                 //a odoslanie prikazu aktivuje UDP prenos na strane raspberry
                             }*/
-                            if(pom_doprava){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
-                                Log.d(LOG_TAG, "doprava");
-                                out.write("tablet");//povolenie ovladania tabletom, inicializacia tcp komunikacia pre prenos
+                            if(pom_video == true){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
+                                synchronized (lockObject1) {
+                                    text_new="video start";
+                                }
+
+                                pom_video_start = true;
+                                text = prijem();
+                                Thread.sleep(500);
+                                Log.d(LOG_TAG, "start videa");
+                                out.write("video");//povolenie ovladania tabletom, inicializacia tcp komunikacia pre prenos
                                 out.flush();
-                                Log.i("prichodzia sprava", inMsg);
+                                pom_video = false;
 
                             }
 
+
                             if (pom_connect == false){
+                                //Thread.sleep(100);
+                                //out.write("nonvideo");
+                                //out.flush();
                                 Thread.sleep(10);
                                 Log.d(LOG_TAG, "disconnect");
                                 out.write("disconnect");
                                 out.flush();
-                                Thread.sleep(10);
+                                Thread.sleep(100);
+                                pom_video_start = false;
                                 break;
                             }
                         }

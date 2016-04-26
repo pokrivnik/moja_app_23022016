@@ -49,8 +49,9 @@
             android:layout_column="9"
             android:layout_row="1"
             android:layout_marginLeft="977dp"
-            android:layout_above="@+id/connect"
-            android:layout_alignParentEnd="true" />
+            android:layout_above="@+id/switch1"
+            android:layout_below="@+id/dopredu"
+            android:layout_toStartOf="@+id/spusti_video" />
 
         <ImageView
             android:layout_width="wrap_content"

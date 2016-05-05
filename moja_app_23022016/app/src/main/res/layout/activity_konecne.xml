@@ -27,12 +27,12 @@
             android:textColor="#020000"
             android:layout_column="1"
             android:layout_row="0"
-            android:layout_alignParentLeft="true"
             android:layout_marginLeft="72dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
             android:inputType="textMultiLine"
-            android:background="#ffffff" />
+            android:background="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/spusti_video"
+            android:layout_marginTop="81dp" />
 
         <Button
             android:id="@+id/angry_btn"
@@ -59,15 +59,16 @@
             android:id="@+id/imageView"
             android:layout_column="1"
             android:background="#fcf8f8"
-            android:minHeight="200dp"
-            android:minWidth="320dp"
+            android:minHeight="640dp"
+            android:minWidth="480dp"
             android:maxHeight="1024dp"
             android:maxWidth="768dp"
             android:longClickable="true"
             android:layout_row="2"
             android:layout_marginLeft="72dp"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_toStartOf="@+id/doprava"
+            android:layout_marginEnd="324dp" />
 
         <Button
             android:layout_width="wrap_content"
@@ -86,7 +87,7 @@
             android:layout_height="wrap_content"
             android:text="Doprava"
             android:id="@+id/doprava"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/text_dopredu"
             android:layout_alignParentEnd="true" />
 
         <Button
@@ -94,8 +95,8 @@
             android:layout_height="wrap_content"
             android:text="Dolava"
             android:id="@+id/dolava"
-            android:layout_alignTop="@+id/doprava"
-            android:layout_toEndOf="@+id/imageView" />
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/spusti_video" />
 
         <Button
             android:layout_width="wrap_content"
@@ -111,8 +112,8 @@
             android:layout_height="wrap_content"
             android:text="Dozadu"
             android:id="@+id/dozadu"
-            android:layout_alignBottom="@+id/text_vpravo"
-            android:layout_alignStart="@+id/dopredu" />
+            android:layout_alignTop="@+id/textView"
+            android:layout_alignEnd="@+id/text_vpravo" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -131,17 +132,18 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="vpravo"
             android:id="@+id/text_vpravo"
-            android:layout_above="@+id/doprava"
-            android:layout_toEndOf="@+id/dolava"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/dolava" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Spusti video"
             android:id="@+id/spusti_video"
-            android:layout_alignBottom="@+id/imageView"
-            android:layout_toEndOf="@+id/text_vpravo" />
+            android:layout_alignTop="@+id/connect"
+            android:layout_toStartOf="@+id/doprava"
+            android:layout_marginEnd="47dp" />
 
         <Switch
             android:layout_width="wrap_content"
@@ -152,8 +154,8 @@
             android:textOff="vysielacka"
             android:textOn="tablet"
             style="@style/AppTheme"
-            android:layout_alignBottom="@+id/dozadu"
-            android:layout_alignStart="@+id/imageView" />
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/textView" />
 
     </RelativeLayout>
 

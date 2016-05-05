@@ -386,6 +386,7 @@ public class konecne extends AppCompatActivity {
         int pom1 = pom;
         Bitmap bmp3 = BitmapFactory.decodeByteArray(obraz, 0, pom1);
 
+
         Log.d(LOG_TAG, "view");
 
         ///Mat mat = new Mat(200,200,CvType.CV_8UC4);
@@ -404,7 +405,8 @@ public class konecne extends AppCompatActivity {
         //Highgui.imencode(ext, img, buf)
         //Bitmap bm = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.ARGB_8888);
         //bmp1.copyPixelsToBuffer(image.getByteBuffer());
-        imgView.setImageBitmap(bmp3);
+        imgView.setImageBitmap(Bitmap.createScaledBitmap(bmp3, 640, 480, false));
+        //imgView.setImageBitmap(bmp3);
         //a = 0;
 
     }
@@ -532,6 +534,9 @@ public class konecne extends AppCompatActivity {
                             out.write("stav");//odosle inicializacnu spravu do raspberry...
                             inMsg = in.readLine();
                             out.flush();
+                            Thread.sleep(1000);
+                            //out.write("arduino");
+                            //out.flush();
                             Log.d(LOG_TAG, "sprava stav odoslana");
 
                             //vsetky spravy by sa mohli zobrazovat pre istotu aj vo vedlajsom textview

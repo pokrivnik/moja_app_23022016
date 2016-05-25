@@ -59,7 +59,7 @@ public class konecne extends AppCompatActivity {
     private String text = "";
     private String tcp1;
     private String tcp2;
-    private boolean pom_dopredu, pom_dozadu, pom_dolava, pom_doprava, pom_connect, pom_prepinac, pom_video = false, pom_video_start = false;
+    private boolean pom_connect, pom_video = false, pom_video_start = false;
     private final Object lockObject = new Object();
     private String text_old, text_new;
     private final Object lockObject1 = new Object();
@@ -100,20 +100,13 @@ public class konecne extends AppCompatActivity {
         setContentView(R.layout.activity_konecne);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //zabrani otoceniu obrazovky
         //pociatocna inicializacia prvkov ako textview
-        zobraz_text_v_textviev = (TextView)findViewById(R.id.textView);
+        zobraz_text_v_textviev = (TextView) findViewById(R.id.textView);
         //zobraz_text_v_textviev.setText("0");
-        Button btnSend = (Button)findViewById(R.id.angry_btn);
-        final Button tlacitko_connect = (Button)findViewById(R.id.connect);
+
+        final Button tlacitko_connect = (Button) findViewById(R.id.connect);
         imgView = (ImageView) findViewById(R.id.imageView);
         //---------------------------------------------------tlacitka-------------------------------------------------------------------------
-        Button tlacitko_dopredu = (Button)findViewById(R.id.dopredu);
-        Button tlacitko_dozadu = (Button)findViewById(R.id.dozadu);
-        Button tlacitko_dolava = (Button)findViewById(R.id.dolava);
-        Button tlacitko_doprava = (Button)findViewById(R.id.doprava);
-        final Button spusti_video = (Button)findViewById(R.id.spusti_video);
-        Switch prepinac = (Switch)findViewById(R.id.switch1);
-
-
+        final Button spusti_video = (Button) findViewById(R.id.spusti_video);
 
         // funkcia timer--------------------------------------------------------------------------------------------------------
 
@@ -125,14 +118,7 @@ public class konecne extends AppCompatActivity {
         }, 0, 1);
 
         // -----------------------funkcia pre kliknutie na tlacitko - prijate suboru-----------------------------
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            // @Override
-            public void onClick(View v) {
-                Log.d(LOG_TAG, "btnRecv clicked");
-                // funkcia pre prijatie
-                //text = prijem();
-            }
-        });
+
         tlacitko_connect.setOnClickListener(new View.OnClickListener() {
             //stlacenim tlacitka sa spusti pociatocna inicializacia. spusti sa vlakno s tcp komunikaciou na porte 1235, kde sa odosle
             //prikaz start, ktory bude cakat na odpoved, mozeme zacat...po stlaceni tlacitka sa zmeni nazov tlacitka na disconnect,
@@ -145,8 +131,7 @@ public class konecne extends AppCompatActivity {
                     Log.i(LOG_TAG, "pom_connect=false");
                     spusti_video.setText("Spusti video");
                     pom_video = false;
-                }
-                else {//spusti hlavny komunikacny thread
+                } else {//spusti hlavny komunikacny thread
                     pom_connect = true;
                     tlacitko_connect.setText("disconnect");
                     Log.i(LOG_TAG, "pom_connect=true");
@@ -161,7 +146,7 @@ public class konecne extends AppCompatActivity {
         spusti_video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pom_video == false){
+                if (pom_video == false) {
                     pom_video = true;
                     spusti_video.setText("Video ON");
                 }
@@ -173,98 +158,8 @@ public class konecne extends AppCompatActivity {
 
 
         });
-//-------------------------------------------------------------------tlacitka ovladanie auta-------------------------------------------------------------
-        tlacitko_dopredu.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    pom_dopredu = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    pom_dopredu = false;
-                }
-                return false;
-            }
-        });
-        tlacitko_dozadu.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    pom_dozadu = true;
-                }
-                else if (event.getAction()==MotionEvent.ACTION_UP){
-                    pom_dozadu = false;
-                }
-                return false;
-            }
-        });
-        tlacitko_doprava.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN){
-                    pom_doprava = true;
-                }
-                else if (event.getAction()==MotionEvent.ACTION_UP){
-                    pom_doprava = false;
-                }
-                return false;
-            }
-        });
-        tlacitko_dolava.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    pom_dolava = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    pom_dolava = false;
-                }
-                return false;
-            }
-        });
 
-//---------------------------------------------------switch vysielacka/tablet---------------------------------------------------------------------------------
-        prepinac.setChecked(false);
-        prepinac.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    //funkcia, prepinac je on
-                    pom_prepinac = true;
-                    Tcp_ovladanie();
-                }
-                else{
-                    //prepinac je off
-                    pom_prepinac = false;
-                }
-
-            }
-        });
-//-------------------------------------------------------------------------------------------------------------------------------------
-        //tlacitko_connect.onHoverChanged();//zmena stavu???
-        //tlacitko_connect.removeOnAttachStateChangeListener();
-        //tlacitko_connect.hasOnClickListeners()//ak je stlacene, vrati 1
-        //stlacime connect, a ak vyberieme ovladanie tabletu, vo while bude case ktore bude cekovat tlacitka ci su aktivne alebo neaktivne
-        //a podla toho bude posielat ci ma ist auto vpred, vzad a pod...
     }
-
-    //-------------------------------------------------------------------------------------------------------------------------------------------
-  /*  @Override  //ak bude tlacitko stlacene, vykona sa funkcia, ak nebude, zavedie sa defaultna hodnota...
-    public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.mybutton:
-            {
-                DoSomething();
-                break;
-            }
-
-            case R.id.mybutton2:
-            {
-                DoSomething();
-                break;
-            }
-        }
-    }*/
-
-
     // ------------------------------------------------------------casovac---------------------------------------------------------------------
     private void TimerMethod() {
         this.runOnUiThread(Timer_Tick);
@@ -284,7 +179,6 @@ public class konecne extends AppCompatActivity {
     };
     private ImageView imgView;
 
-
     //------------------------------------------------------------------------------------------------------------------------------------------
     public void zapis_text(){
         if (text_old!=text_new){
@@ -297,8 +191,6 @@ public class konecne extends AppCompatActivity {
         }
 
     }
-
-
 
     //--------------------------------------------------------------------funkcia UDP z UDP client------------------------------------------------------------------------
     public String prijem() {
@@ -364,13 +256,7 @@ public class konecne extends AppCompatActivity {
         return lText;
 
     }
-    // ----------------------------------------funkcia na prevod string do image-------------------------------------------------------------
-    public static byte[] dekodovanie(String imageDataString) {
-        Log.d(LOG_TAG, "dekodovanie");
-        return Base64.decode(imageDataString, 0);
-    }
 
-    //------------------------------------------------------prevod byte to jpg-------------------------------------
     public void text(){
         tcp2=tcp1;
         zobraz_text_v_textviev.setText(tcp2);
@@ -378,127 +264,16 @@ public class konecne extends AppCompatActivity {
     }
 //--------------------------------------------------------------------------------------------------------------------------------------
     public void obrazok() {
-        //tcp2=tcp1;
-        //zobraz_text_v_textviev.setText(tcp2);
         byte[] obraz=obrazok;
-        //byte rgb[] = Base64.decode(obraz, 0);
-        //Bitmap bmp3 = bmp2;
+
         int pom1 = pom;
         Bitmap bmp3 = BitmapFactory.decodeByteArray(obraz, 0, pom1);
-
-
         Log.d(LOG_TAG, "view");
-
-        ///Mat mat = new Mat(200,200,CvType.CV_8UC4);
-        ///mat.put(200, 200, obraz);
-        //---------------------------------------------
-        //Log.d(LOG_TAG, "vytvorenie bitmap");
-        ///Bitmap bmp1 = Bitmap.createBitmap(200, 200,Config.RGB_565);
-        //Log.d(LOG_TAG, "prevod do bitmap");
-        //Imgproc.resize(obraz2, obraz2, );
-
-        ///Utils.matToBitmap(mat, bmp1);
-        //}
-        //------------------------------------------------
-        //Bitmap bm = BitmapFactory.decodeByteArray(imagePol, 0, imagePol.length);
-        //Mat image = mat;
-        //Highgui.imencode(ext, img, buf)
-        //Bitmap bm = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.ARGB_8888);
-        //bmp1.copyPixelsToBuffer(image.getByteBuffer());
         imgView.setImageBitmap(Bitmap.createScaledBitmap(bmp3, 640, 480, false));
-        //imgView.setImageBitmap(bmp3);
-        //a = 0;
-
-    }
-    //--------------------------------------------------------------------TCP ovladanie auta port 1236------------------------------------------------------------------------------------
-    public void Tcp_ovladanie(){
-        try {
-
-        }finally {
-
-        }
-            Thread thrd = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.e(LOG_TAG, "start recv thread, thread id: "
-                            + Thread.currentThread().getId());
-                    // funkcia z ineho vlakna
-                    try {
-                        Socket s = new Socket("192.168.0.70", 1236);
-                        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-                        //send output msg
-                        if (pom_prepinac){//ak bude zvolene ovladanie z tabletu
-                        while (true) {
-                            if (pom_dopredu){
-                                out.write("dopredu");
-                                out.flush();
-                            }
-                            else{
-                                out.write("stop");
-                                out.flush();
-                            }
-                            if (pom_dozadu){
-                                out.write("dozadu");
-                                out.flush();
-                            }
-                            else{
-                                out.write("stop");
-                                out.flush();
-                            }
-                            if (pom_doprava){
-                                out.write("doprava");
-                                out.flush();
-                            }
-                            else{
-                                out.write("stred");
-                                out.flush();
-                            }
-                            if (pom_dolava){
-                                out.write("dolava");
-                                out.flush();
-                            }
-                            else{
-                                out.write("stred");
-                                out.flush();
-                            }
-                            if (pom_prepinac == false){
-                                break;
-                            }
-
-                        }}
-                        else{
-                            s.close();
-                            out.write("stred");
-                            out.flush();
-                            out.write("stop");
-                            out.flush();
-                            out.write("disconnect");
-                            out.flush();
-                        }
-                        s.close();
-                        out.write("stred");
-                        out.flush();
-                        out.write("stop");
-                        out.flush();
-                                //close connection
-
-                    } catch (UnknownHostException e) {
-                     e.printStackTrace();
-                    } catch (IOException e) {
-                    e.printStackTrace();
-                    }
-                }
-
-            });
-            Log.d(LOG_TAG, "thread close");
-
-            thrd.start();
 
     }
 
-
-    //--------------------------------------------------------funkcia start prenosu port 1235---------------------------------------------------------------------------------------
+    //--------------------------------------------------------funkcia start prenosu port 1237---------------------------------------------------------------------------------------
     public void TcpClient(){
         try {
 
@@ -539,12 +314,8 @@ public class konecne extends AppCompatActivity {
                             //out.flush();
                             Log.d(LOG_TAG, "sprava stav odoslana");
 
-                            //vsetky spravy by sa mohli zobrazovat pre istotu aj vo vedlajsom textview
 
-                            /*if(pom_connect){//povolenie odosielania obrazu, prikaz na inicializaciu UDP prenosu. stlacenie tlacitka aktivuje UDP na strane talbetu
-                                //a odoslanie prikazu aktivuje UDP prenos na strane raspberry
-                            }*/
-                            if(pom_video == true){//odoslanie informacie ci bude auto ovladane vysielackou alebo tabletom, defaultne vysielacka
+                            if(pom_video == true){
                                 synchronized (lockObject1) {
                                     text_new="video start";
                                 }
@@ -553,17 +324,13 @@ public class konecne extends AppCompatActivity {
                                 text = prijem();
                                 Thread.sleep(500);
                                 Log.d(LOG_TAG, "start videa");
-                                out.write("video");//povolenie ovladania tabletom, inicializacia tcp komunikacia pre prenos
+                                out.write("video");
                                 out.flush();
                                 pom_video = false;
-
                             }
 
-
                             if (pom_connect == false){
-                                //Thread.sleep(100);
-                                //out.write("nonvideo");
-                                //out.flush();
+
                                 Thread.sleep(10);
                                 Log.d(LOG_TAG, "disconnect");
                                 out.write("disconnect");
@@ -601,10 +368,6 @@ public class konecne extends AppCompatActivity {
         thrd.start();
 
     }
-
-    //------------------------------------------------------------------------funkcia komunikacia TCP-----------------------------------------------------------------------------
-    //tuto funkciu by som rad inicializoval po stlaceni tlacitka. TCP komunikacia by nastala ako prva. spustala by video, obrazky, detekciu prekazky,
-    //opticky, ultrazvukovy senzor, akoo aj povolenie ovladania z vysielacky alebo tabletu
 
     //------------------------------------------------------------------------koniec-------------------------------------------------------------------------------
 }//--------------------------------------------------------------------class-------------------------------------------------

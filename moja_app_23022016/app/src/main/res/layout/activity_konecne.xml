@@ -22,36 +22,16 @@
         <TextView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:text="hmm"
+            android:text="Napätie"
             android:id="@+id/textView"
-            android:textColor="#020000"
+            android:textColor="#fdfbfb"
             android:layout_column="1"
             android:layout_row="0"
             android:layout_marginLeft="72dp"
             android:inputType="textMultiLine"
-            android:background="#ffffff"
+            android:background="#040000"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/spusti_video"
-            android:layout_marginTop="81dp" />
-
-        <Button
-            android:id="@+id/angry_btn"
-            android:text="UDP video"
-            android:textColor="#FFFFFF"
-            android:textSize="10sp"
-            android:layout_width="100dp"
-            android:layout_height="20dp"
-            android:background="@drawable/buttonshape"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
-            android:layout_column="9"
-            android:layout_row="1"
-            android:layout_marginLeft="977dp"
-            android:layout_above="@+id/switch1"
-            android:layout_below="@+id/dopredu"
-            android:layout_toStartOf="@+id/spusti_video" />
+            android:layout_alignEnd="@+id/spusti_video" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -67,7 +47,6 @@
             android:layout_row="2"
             android:layout_marginLeft="72dp"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/doprava"
             android:layout_marginEnd="324dp" />
 
         <Button
@@ -85,77 +64,11 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Doprava"
-            android:id="@+id/doprava"
-            android:layout_below="@+id/text_dopredu"
-            android:layout_alignParentEnd="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dolava"
-            android:id="@+id/dolava"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/spusti_video" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dopredu"
-            android:id="@+id/dopredu"
-            android:layout_below="@+id/imageView"
-            android:layout_alignEnd="@+id/textView"
-            android:longClickable="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dozadu"
-            android:id="@+id/dozadu"
-            android:layout_alignTop="@+id/textView"
-            android:layout_alignEnd="@+id/text_vpravo" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="dopredu"
-            android:id="@+id/text_dopredu"
-            android:textColor="#ffffff"
-            android:layout_alignBaseline="@+id/dozadu"
-            android:layout_alignBottom="@+id/dozadu"
-            android:layout_toEndOf="@+id/dozadu" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="vpravo"
-            android:id="@+id/text_vpravo"
-            android:textColor="#ffffff"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/dolava" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Spusti video"
             android:id="@+id/spusti_video"
             android:layout_alignTop="@+id/connect"
-            android:layout_toStartOf="@+id/doprava"
-            android:layout_marginEnd="47dp" />
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Auto/Tablet"
-            android:id="@+id/switch1"
-            android:textColor="#ffffff"
-            android:textOff="vysielacka"
-            android:textOn="tablet"
-            style="@style/AppTheme"
-            android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/textView" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="135dp" />
 
     </RelativeLayout>
 
